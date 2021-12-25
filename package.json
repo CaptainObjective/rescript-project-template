@@ -2,7 +2,9 @@
   "name": "rescript-project-template",
   "version": "0.0.1",
   "scripts": {
-    "build": "rescript",
+    "dev": "vite",
+    "preview": "vite preview",
+    "build": "rescript & vite build",
     "clean": "rescript clean -with-deps",
     "start": "rescript build -w"
   },
@@ -12,6 +14,13 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@rescript/react": "^0.10.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "rescript": "*"
+  },
+  "devDependencies": {
+    "bs-platform": "^9.0.2",
+    "vite": "^2.7.2"
   }
 }
