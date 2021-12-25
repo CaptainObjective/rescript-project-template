@@ -4,6 +4,7 @@ type cell = {
   x: int,
   y: int,
   value: value,
+  isRevealed: bool,
 }
 
 let totalWidth = 8
@@ -28,10 +29,26 @@ let dropOutsiders = keep(_, ((x, y)) => both(isInsideBoard(x), isInsideBoard(y))
 let calculateValue = cell => findNeighbours(cell)->dropOutsiders->addBombs->Warning
 let getCellValue = cell => isEqual(cell.value, Bomb) ? Bomb : calculateValue(cell)
 
-let createCells = x => makeBy(totalHeight, y => {x: x, y: y, value: Warning(0)})
-let setBomb = ({x, y}) => {x: x, y: y, value: isBomb((x, y)) ? Bomb : Warning(0)}
-let setValue = cell => {x: cell.x, y: cell.y, value: getCellValue(cell)}
-let getValue = cell => cell.value
+let createCells = x => makeBy(totalHeight, y => {x: x, y: y, value: Warning(0), isRevealed: false})
+let setBomb = ({x, y}) => {x: x, y: y, value: isBomb((x, y)) ? Bomb : Warning(0), isRevealed: false}
+let setValue = cell => {x: cell.x, y: cell.y, value: getCellValue(cell), isRevealed: false}
 
-let cells =
-  makeBy(totalWidth, identity)->map(createCells)->flat->map(setBomb)->map(setValue)->map(getValue)
+let cells = makeBy(totalWidth, identity)->map(createCells)->flat->map(setBomb)->map(setValue)
+
+//----
+let pointToCell = ((x, y)) =>
+  getBy(cells, cell => both(_ => isEqual(x, cell.x), _ => isEqual(y, cell.y)))
+
+let hasNoWarning = keep(_, cell => cell.value === Warning(0))
+let getCellsToReveal = cell =>
+  findNeighbours(cell)->append((cell.x, cell.y))->map(pointToCell)->mapOptionsToValues
+
+let isRevealed = (cell, updatedCells) =>
+  some(updatedCells, ({x, y}) => both(_ => isEqual(x, cell.x), _ => isEqual(y, cell.y)))
+
+let markRevealed = cell => {...cell, isRevealed: true}
+let updateCell = (updatedCells, cell) => isRevealed(cell, updatedCells) ? markRevealed(cell) : cell
+let updateCells = updatedCells => map(cells, updateCell(updatedCells))
+let revealCells = cell => cell->getCellsToReveal->updateCells
+
+// cell => (x,y)[]

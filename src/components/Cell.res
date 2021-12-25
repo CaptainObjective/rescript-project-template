@@ -1,5 +1,3 @@
-@val external alert: string => unit = "alert"
-
 let getStyle = isChecked =>
   ReactDOM.Style.make(
     ~width="10vh",
@@ -14,16 +12,19 @@ let getStyle = isChecked =>
   )
 
 @react.component
-let make = (~value: Game.value) => {
-  let (isClicked, setIsClicked) = React.useState(_ => false)
+let make = (
+  ~value: Game.value,
+  ~x: int,
+  ~y: int,
+  ~handleCellClick: Game.cell => unit,
+  ~isRevealed: bool,
+) => {
+  let style = getStyle(isRevealed)
+  let content = isRevealed ? value : Game.Warning(0)
+
   let onClick = _ => {
-    setIsClicked(_ => true)
-    if value === Game.Bomb {
-      let _ = Js.Global.setTimeout(() => alert("Game over"), 300)
-    }
+    handleCellClick({x: x, y: y, value: value, isRevealed: false})
   }
-  let style = getStyle(isClicked)
-  let content = isClicked ? value : Game.Warning(0)
-  // let content = value
+
   <div style onClick> {<CellContent content />} </div>
 }
