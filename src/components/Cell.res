@@ -21,7 +21,7 @@ let make = (
 ) => {
   let style = getStyle(isRevealed)
   let content = isRevealed ? value : Game.Warning(0)
-
+  // let content = value
   let onClick = _ => {
     handleCellClick({x: x, y: y, value: value, isRevealed: false})
   }

@@ -17,8 +17,7 @@ let make = () => {
   }
 
   let revealCells = cell => {
-    let cellsToReveal = Game.revealCells(cell)
-    setCells(_ => cellsToReveal)
+    setCells(cells => Game.revealCells(cells, cell))
   }
 
   let handleCellClick = (cell: Game.cell) => {

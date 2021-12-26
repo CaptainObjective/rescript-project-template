@@ -17,3 +17,4 @@ open Belt.Array
 let append = (arr, el) => concat(arr, [el])
 let flat = arr => reduce(arr, [], concat)
 let mapOptionsToValues = keepMap(_, el => el !== None ? el : None)
+let toArray = el => [el]
